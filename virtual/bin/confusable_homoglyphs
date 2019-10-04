@@ -1,5 +1,4 @@
-#!/home/moringa/Desktop/Sanergy/virtual/bin/python3.6
-
+#!/home/moringa/Desktop/Sanergy/virtual/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
