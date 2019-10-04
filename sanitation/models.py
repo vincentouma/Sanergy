@@ -1,17 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import datetime
+
 
 class User(models.Model):
     first_name=models.CharField(max_length = 65, blank=True)
     last_name=models.CharField(max_length = 65, blank=True)
     phone_number=models.IntegerField(default=0, blank= True)
-    user_id_number= models.IntegerField(default=0, blank=True)
+    user_id_number= models.IntegerField(default="",primary_key=True)
     location=models.CharField(max_length = 65, blank=True)
 
 class Payment(models.Model):
     name = models.CharField(max_length = 65, blank=True)
     account = models.CharField(max_length = 65, blank=True)
-    phone_Number= models.IntegerField(default=0)
+    phone_Number= models.CharField(max_length=15)
     amount = models.IntegerField(default=0)
 
 
@@ -31,19 +33,25 @@ class BaseModel(models.Model):
 class MpesaCalls(BaseModel):
     ip_address = models.TextField()
     caller = models.TextField()
+    merchant_id = models.TextField(null=False,default="")
+    checkout_request_id=models.TextField(null=False,default="")
     conversation_id = models.TextField()
     content = models.TextField()
     class Meta:
         verbose_name = 'Mpesa Call'
         verbose_name_plural = 'Mpesa Calls'
+
 class MpesaCallBacks(BaseModel):
     ip_address = models.TextField()
-    caller = models.TextField()
+    caller = models.TextField() 
+    merchant_id = models.TextField(null=False,default="")
+    checkout_request_id=models.TextField(null=False,default="")
     conversation_id = models.TextField()
     content = models.TextField()
     class Meta:
         verbose_name = 'Mpesa Call Back'
         verbose_name_plural = 'Mpesa Call Backs'
+
 class MpesaPayment(BaseModel):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
@@ -61,9 +69,8 @@ class MpesaPayment(BaseModel):
         return self.first_name        
 
 class Toilet(models.Model):
-    account_number= models.CharField(max_length=100)
-    toilet_tag= models.CharField(max_length=100)
-    user_id_number = models.ForeignKey(User,null=True)
+    toilet_tag= models.IntegerField(default=0, null=True)
+    user_id_number = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def save_toilet(self):
         self.save()
@@ -71,10 +78,12 @@ class Toilet(models.Model):
     def __str__(self):
         return self.toilet_tag    
 
-class Bills(models.Model):
+class Bills(models.Model,):
     amount=models.IntegerField(blank=True)
     phone_number=models.TextField()
     reference=models.TextField()
+    # date = models.DateField(default=datetime.date.today)
+    # toilet_tag=models.ForeignKey(Toilet,on_delete=models.CASCADE,)
 
     def __str__(self):
         return str(self.amount) 
@@ -82,3 +91,10 @@ class Bills(models.Model):
 
     def save_bills(self):
         self.save()
+
+    @classmethod
+    def search_by_phone_number(cls,search_term):
+        bills = cls.objects.filter(phone_number__icontains=search_term)
+        return bills   
+
+

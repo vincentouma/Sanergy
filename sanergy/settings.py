@@ -27,7 +27,7 @@ SECRET_KEY = 'l$^$(_&plghod^x7u9$xqoc7evs(rpsnh2i&273819t)=24_3_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 ######## C2B MPESA DETAILS.#########
 
@@ -132,7 +132,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sanergy',
         'USER': 'moringa',
-    'PASSWORD':'vinceobindi1005',
+    'PASSWORD': 'vinceouma1005',
     }
 }
 
@@ -176,14 +176,8 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),
 )
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-

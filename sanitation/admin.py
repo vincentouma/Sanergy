@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import *
-# Register your models here.
-
+from .models import MpesaPayment, User, Bills
 
 admin.site.register(MpesaPayment)
 admin.site.register(User)
