@@ -25,6 +25,9 @@ urlpatterns = [
     url(r'^api/bills/', views.BillsList.as_view()),
     url(r'^all_customer_bills/', views.all_customer_bills, name='all_customer_bills'),
 
+    #generic api
+    url(r'^CombinedReport/', views.combinedReport, name='combinedReport'),
+
 
 
  #profile
