@@ -1,0 +1,46 @@
+{%extends "registration/base.html"%}
+{% load bootstrap3 %}
+{% block content %}
+
+
+<div class="col-md-10">
+    <table class="table table-bordered table-primary" id="tblCustomers" cellspacing="0" cellpadding="0">
+<tr>
+    <th>No</th> 
+    <th>Bill Amount</th> 
+    <th>Bill Phone Number</th> 
+    <th>Bill reference</th>
+  </tr>
+​{% for comb in all_bills%}
+
+    <tr>
+      <td>{{comb.id}}</td>
+      <td>{{comb.amount}}</td>
+      <td>{{comb.phone_number}}</td>
+      <td>{{comb.reference}}</td>
+    </tr>
+    {% endfor %}
+    </table></div>
+    <div class="col-md-10">
+        <table class="table table-bordered table-primary" id="tblCustomers" cellspacing="0" cellpadding="0">  
+    <tr>
+        <th>No</th> 
+        <th>Bill Amount</th> 
+        <th>Bill Phone Number</th> 
+        <th>Bill reference</th>
+      </tr>
+
+    {% for comb in all_payments%}
+
+    ​
+        <tr>
+          <td>{{comb.name}}</td>
+          <td>{{comb.account}}</td>
+          <td>{{comb.phone_Number}}</td>
+          <td>{{comb.amount}}</td>
+        </tr>
+        {% endfor %}
+        </table>
+        </div>
+{% endblock %}
+​
