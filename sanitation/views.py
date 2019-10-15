@@ -85,7 +85,7 @@ def lipa_na_mpesa_online(phone, amount):
         "PartyA": phone,  # replace with your phone number to get stk push
         "PartyB": LipanaMpesaPpassword.Business_short_code,
         "PhoneNumber": phone,  # replace with your phone number to get stk push
-        "CallBackURL": "https://e67761c8.ngrok.io/confirmation/",
+        "CallBackURL": "https://2b7c5cb8.ngrok.io/confirmation/",
         "AccountReference": "Obindi",
         "TransactionDesc": "Testing stk push"
     }
@@ -98,6 +98,7 @@ def lipa_na_mpesa_online(phone, amount):
         pass
     merchant_id = response
     print(response.json())
+
 
 
 
@@ -283,7 +284,7 @@ def send_receipt(request):
     receipt = af.SMS
     # Use the service synchronously
 
-    customers = [
+    customers = [                          
         # "+"+customer,
         '+254717654230',
 
