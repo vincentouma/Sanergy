@@ -19,10 +19,11 @@
             {% if payment %}
             {% for payment in payment %}
             <div class="col-sm-6 col-md-3">
-            <h1>{{payment.phone_number}}</h1>
+            <h1>{{payment.name}}</h1>
           <p>{{ payment.amount}}</p>
           <p>{{payment.account}}</p>
-          <p>{{payment.name}}</p>
+          <p>{{payment.phone_Number}}</p>
+          <p>{{payment.timestamp}}</p>
 
 
             </div>
