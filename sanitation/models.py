@@ -15,6 +15,8 @@ class Payment(models.Model):
     account = models.CharField(max_length = 65, blank=True)
     phone_Number= models.CharField(max_length=15)
     amount = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+
 
 
     def __str__(self):
@@ -69,8 +71,8 @@ class MpesaPayment(BaseModel):
         return self.first_name        
 
 class Toilet(models.Model):
-    toilet_tag= models.IntegerField(default=0, null=True)
-    user_id_number = models.ForeignKey(User,on_delete=models.CASCADE)
+    toilet_tag= models.TextField(max_length=30, null=False, default="")
+    user_id_number = models.ForeignKey(User,on_delete=models.CASCADE, null=False)
 
     def save_toilet(self):
         self.save()
@@ -82,8 +84,10 @@ class Bills(models.Model,):
     amount=models.IntegerField(blank=True)
     phone_number=models.TextField()
     reference=models.TextField()
-    # date = models.DateField(default=datetime.date.today)
-    # toilet_tag=models.ForeignKey(Toilet,on_delete=models.CASCADE,)
+    timestamp = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+
+
+
 
     def __str__(self):
         return str(self.amount) 
@@ -97,4 +101,4 @@ class Bills(models.Model,):
         bills = cls.objects.filter(phone_number__icontains=search_term)
         return bills   
 
-
+##Authenticatio/

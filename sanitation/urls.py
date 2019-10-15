@@ -27,6 +27,9 @@ urlpatterns = [
 
     #generic api
     url(r'^CombinedReport/', views.combinedReport, name='combinedReport'),
+    url(r'^send_sms/', views.send_sms, name='send_sms'),
+    url('access/token', views.getAccessToken, name='get_mpesa_access_token'),
+
 
 
 

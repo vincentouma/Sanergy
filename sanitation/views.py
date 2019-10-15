@@ -13,6 +13,8 @@ from .serializer import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import datetime as dt
+import africastalking
+
 
 
 from rest_framework import generics
@@ -83,7 +85,7 @@ def lipa_na_mpesa_online(phone, amount):
         "PartyA": phone,  # replace with your phone number to get stk push
         "PartyB": LipanaMpesaPpassword.Business_short_code,
         "PhoneNumber": phone,  # replace with your phone number to get stk push
-        "CallBackURL": "https://d0ed473a.ngrok.io/confirmation/",
+        "CallBackURL": "https://e67761c8.ngrok.io/confirmation/",
         "AccountReference": "Obindi",
         "TransactionDesc": "Testing stk push"
     }
@@ -152,7 +154,8 @@ def confirmation(request):
            phone_number=mpesa_payment[4]['Value'],
            reference=mpesa_payment[1]['Value'],
            amount=mpesa_payment[0]['Value']
-        ) 
+        )
+
         b.save()
         context = {
             "ResultCode": 0,
@@ -227,50 +230,32 @@ def all_customer_bills(request):
     return render(request, 'all_bills.html', {'customer_bills': customer_bills})
 
 
+def getAccessToken(request):
+    consumer_key = 'F53c328bf59161cb838b48b94bdcb26a4ed2e19611e2ad1a4f056ecdf27e5fd2'
+    ShortCode = '1005'
+    api_URL = 'https://api.africastalking.com/auth-token/generate'
+    r = requests.get(api_URL, auth=HTTPBasicAuth(consumer_key, ShortCode))
+    mpesa_access_token = json.loads(r.text)
+    validated_mpesa_access_token = mpesa_access_token['access_token']
+    return HttpResponse(validated_mpesa_access_token)
 
 
-# @login_required(login_url='/accounts/login/')
-# def user_profile(request,username):
-#     user = User.objects.get(username=username)
-#     profile =Profile.objects.get(username=user)
+def send_sms(request):
+    url = ('https://api.sandbox.africastalking.com/version1/messaging/? api_key = F53c328bf59161cb838b48b94bdcb26a4ed2e19611e2ad1a4f056ecdf27e5fd2')
+    # africastalking.initialize(ShortCode, api_key)
+    # headers = {"Authorization": "Bearer %s" % access_token}
+    request = {
+        "user_name": 'sandbox',
+        "recipients": '+254717654230',
+        "message": "I'm a lumberjack and it's ok, I sleep all night and I work all day",
+        "sender": "1005"
+            
+    }
 
-# @login_required(login_url='/accounts/login/')
-# def create_profile(request):
-#     current_user=request.user
-#     if request.method=="POST":
-#         form =ProfileForm(request.POST,request.FILES)
-#         if form.is_valid():
-#             profile = form.save(commit = False)
-#             profile.username = current_user
-#             profile.save()
-#         return HttpResponseRedirect('/')
-#     else:
-#         form = ProfileForm()
-#         return render(request,'profile/profile_form.html',{"form":form})
-    
+    response = requests.post(json=request, url=url)
+    return HttpResponse('success')
 
-# @login_required(login_url='/accounts/login/')
-# def update_profile(request):
-#     current_user=request.user
-#     if request.method=="POST":
-#         instance = Profile.objects.get(username=current_user)
-#         form =ProfileForm(request.POST,request.FILES,instance=instance)
-#         if form.is_valid():
-#             profile = form.save(commit = False)
-#             profile.username = current_user
-#             profile.save()
 
-#         return redirect('index')
-
-#     elif Profile.objects.get(username=current_user):
-#         profile = Profile.objects.get(username=current_user)
-#         form = ProfileForm(instance=profile)
-#     else:
-#         form = ProfileForm()
-
-#     return render(request,'profile/update_profile.html',{"form":form})
-
-#combined views
 
 
 def combinedReport(request):
@@ -280,3 +265,6 @@ def combinedReport(request):
     print(all_payments)
 
     return render(request,'combined.html',{'all_bills':all_bills,"all_payments":all_payments})
+
+
+

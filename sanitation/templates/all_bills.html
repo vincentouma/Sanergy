@@ -32,6 +32,8 @@
       <th>Bill Amount</th> 
       <th>Bill Phone Number</th> 
       <th>Bill reference</th>
+      <th>Date</th>
+
     </tr>
     {% for customer_bill in customer_bills%}
 ​
@@ -40,6 +42,8 @@
       <td>{{customer_bill.amount}}</td>
       <td>{{customer_bill.phone_number}}</td>
       <td>{{customer_bill.reference}}</td>
+      <td>{{customer_bill.timestamp}}</td>
+
     </tr>
     {% endfor %}
 ​

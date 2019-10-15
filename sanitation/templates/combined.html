@@ -10,6 +10,7 @@
     <th>Bill Amount</th> 
     <th>Bill Phone Number</th> 
     <th>Bill reference</th>
+    <th>Date</th>
   </tr>
 ​{% for comb in all_bills%}
 
@@ -18,16 +19,18 @@
       <td>{{comb.amount}}</td>
       <td>{{comb.phone_number}}</td>
       <td>{{comb.reference}}</td>
+      <td>{{comb.timestamp}}</td>
     </tr>
     {% endfor %}
     </table></div>
     <div class="col-md-10">
         <table class="table table-bordered table-primary" id="tblCustomers" cellspacing="0" cellpadding="0">  
     <tr>
-        <th>No</th> 
-        <th>Bill Amount</th> 
+        <th>Name</th> 
+        <th>account_number </th> 
         <th>Bill Phone Number</th> 
-        <th>Bill reference</th>
+        <th>Bill Amount</th>
+        <td>Date</td>
       </tr>
 
     {% for comb in all_payments%}
@@ -38,6 +41,7 @@
           <td>{{comb.account}}</td>
           <td>{{comb.phone_Number}}</td>
           <td>{{comb.amount}}</td>
+          <td>{{comb.timestamp}}</td>
         </tr>
         {% endfor %}
         </table>
