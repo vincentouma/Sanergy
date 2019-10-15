@@ -23,7 +23,12 @@ class Payment(models.Model):
         return self.name
 
     def save_payment(self):
-        self.save()    
+        self.save() 
+
+    @classmethod
+    def search_by_phone_Number(cls,search_term):
+        payment = cls.objects.filter(phone_Number__icontains=search_term)
+        return payment  
 
 
 class BaseModel(models.Model):
@@ -82,8 +87,8 @@ class Toilet(models.Model):
 
 class Bills(models.Model,):
     amount=models.IntegerField(blank=True)
-    phone_number=models.TextField()
-    reference=models.TextField()
+    phone_number=models.TextField(default=0)
+    reference=models.TextField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True,blank=True,null=True)
 
 

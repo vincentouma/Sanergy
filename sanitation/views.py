@@ -13,7 +13,7 @@ from .serializer import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import datetime as dt
-import africastalking
+import africastalking as af
 
 
 
@@ -193,15 +193,16 @@ def bills(request):
 
 
 def search_results(request):
-    
-    if 'bills' in request.GET and request.GET["bills"]:
-        search_term = request.GET.get("bills")
-        searched_bills = Bills.search_by_phone_number(search_term)
+    print(request.GET["payment"],'===================')
+    if 'payment' in request.GET and request.GET["payment"]:
+        search_term = request.GET.get("payment")
+        searched_payment = Payment.search_by_phone_Number(search_term)
         message = f"{search_term}"
 
-        return render(request, 'search.html',{"message":message,"bills": searched_bills})
+        return render(request, 'search.html',{"message":message,"payment": searched_payment})
 
     else:
+    
         message = "You haven't searched for any term"
         return render(request, 'search.html',{"message":message})
 
@@ -240,20 +241,23 @@ def getAccessToken(request):
     return HttpResponse(validated_mpesa_access_token)
 
 
-def send_sms(request):
-    url = ('https://api.sandbox.africastalking.com/version1/messaging/? api_key = F53c328bf59161cb838b48b94bdcb26a4ed2e19611e2ad1a4f056ecdf27e5fd2')
-    # africastalking.initialize(ShortCode, api_key)
-    # headers = {"Authorization": "Bearer %s" % access_token}
-    request = {
-        "user_name": 'sandbox',
-        "recipients": '+254717654230',
-        "message": "I'm a lumberjack and it's ok, I sleep all night and I work all day",
-        "sender": "1005"
-            
-    }
+# def send_sms(request):
+#     url = ('https://api.sandbox.africastalking.com/version1/messaging/? api_key = F53c328bf59161cb838b48b94bdcb26a4ed2e19611e2ad1a4f056ecdf27e5fd2')
+#     # africastalking.initialize(ShortCode, api_key)
+#     # headers = {"Authorization": "Bearer %s" % access_token}
+#     request = {
+#         "recipients": '+254706915605',
+#         "message": "I'm a lumberjack and it's ok, I sleep all night and I work all day",
+#         "sender": "1005",
+#         "user_name": "sandbox"
+     
+#     }
 
-    response = requests.post(json=request, url=url)
-    return HttpResponse('success')
+#     response = requests.post(json=request, url=url)
+#     return HttpResponse('success')
+#     print(response.json())
+
+    
 
 
 
@@ -268,3 +272,34 @@ def combinedReport(request):
 
 
 
+def send_receipt(request):
+        # Initialize SDK
+    username='sanergy'
+    api_key='7724f7cb28239d2244aa9af7c28313283732507bf9ebc30706951d8d1a011517'
+
+    af.initialize(username, api_key)
+
+    # Initialize a service e.g. SMS
+    receipt = af.SMS
+    # Use the service synchronously
+
+    customers = [
+        # "+"+customer,
+        '+254717654230',
+
+    ]
+    message='Confirmed you have payed for your toilet . Thank you for being a faithfull customer.'
+    response = receipt.send(message, customers)
+    print(response)
+
+    # Or use it asynchronously
+
+    def on_finish(error, response):
+        if error is not None:
+            raise error
+        # print(response)
+        return response
+
+    # sms.send(message, ["+"+customer], callback=on_finish)
+
+    return HttpResponse('success')
