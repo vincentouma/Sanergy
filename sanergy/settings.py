@@ -131,8 +131,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sanergy',
-        'USER': 'moringa',
-    'PASSWORD': 'vinceouma1005',
+        'USER': 'nimo',
+    'PASSWORD': 'brayo',
+
     }
 }
 
@@ -180,4 +181,10 @@ MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),
+
 )
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]

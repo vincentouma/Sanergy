@@ -1,6 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+
+from django.conf import settings
+
+
+class Profile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    phone_number = models.CharField(default=None,max_length=10)
+    id_number =models.CharField(max_length=10,default=None)
+
+
 import datetime
+
 
 
 class User(models.Model):
@@ -83,9 +94,17 @@ class Toilet(models.Model):
         self.save()
 
     def __str__(self):
+
+        
         return self.toilet_tag    
 
+
+
+
+class Bills(models.Model):
+
 class Bills(models.Model,):
+
     amount=models.IntegerField(blank=True)
     phone_number=models.TextField(default=0)
     reference=models.TextField(default=0)
@@ -95,10 +114,15 @@ class Bills(models.Model,):
 
 
     def __str__(self):
-        return str(self.amount) 
+        return (self.amount) 
 
 
     def save_bills(self):
+
+
+        self.save()
+ 
+
         self.save()
 
     @classmethod
