@@ -12,7 +12,6 @@ from mpesa_api.core.mpesa import Mpesa
 from .serializer import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
-<<<<<<< HEAD
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.

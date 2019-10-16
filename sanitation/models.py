@@ -7,19 +7,13 @@ from django.conf import settings
 class Profile(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     phone_number = models.CharField(default=None,max_length=10)
-    id_number =models.CharField(max_length=10,default=None)
+    id_number =models.CharField(max_length=10,default=None,primary_key=True)
 
 
 import datetime
 
 
 
-class User(models.Model):
-    first_name=models.CharField(max_length = 65, blank=True)
-    last_name=models.CharField(max_length = 65, blank=True)
-    phone_number=models.IntegerField(default=0, blank= True)
-    user_id_number= models.IntegerField(default="",primary_key=True)
-    location=models.CharField(max_length = 65, blank=True)
 
 class Payment(models.Model):
     name = models.CharField(max_length = 65, blank=True)
@@ -88,7 +82,9 @@ class MpesaPayment(BaseModel):
 
 class Toilet(models.Model):
     toilet_tag= models.TextField(max_length=30, null=False, default="")
-    user_id_number = models.ForeignKey(User,on_delete=models.CASCADE, null=False)
+    user_id_number = models.ForeignKey(Profile,on_delete=models.CASCADE, null=False)
+    location=models.CharField(max_length = 65, blank=True)
+
 
     def save_toilet(self):
         self.save()
@@ -101,9 +97,9 @@ class Toilet(models.Model):
 
 
 
-class Bills(models.Model):
 
-class Bills(models.Model,):
+
+class Bills(models.Model):
 
     amount=models.IntegerField(blank=True)
     phone_number=models.TextField(default=0)
