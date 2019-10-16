@@ -11,6 +11,7 @@
     <th>Bill Phone Number</th> 
     <th>Bill reference</th>
     <th>Date</th>
+    <th>Account</th>
   </tr>
 ​{% for comb in all_bills%}
 
@@ -20,6 +21,7 @@
       <td>{{comb.phone_number}}</td>
       <td>{{comb.reference}}</td>
       <td>{{comb.timestamp}}</td>
+      <td>{{comb.account}}</td>
     </tr>
     {% endfor %}
     </table></div>

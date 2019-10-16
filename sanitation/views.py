@@ -13,25 +13,13 @@ from .serializer import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.decorators import login_required
-
-# Create your views here.
-
-def login(request):
-    if request.method=='POST':
-        form = UserCreationForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-        return render('login')
-
-
+import datetime as dt
 from mpesa_api.core.mpesa import Mpesa
 from .serializer import *
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from .utils import send_bill_receipt
 import datetime as dt
-import africastalking as af
 
 
 from rest_framework import generics
@@ -49,11 +37,15 @@ def my_profile(request):
     profile =Profile.objects.get(username=current_user)
     return render(request,'profile/user_profile.html',{"profile":profile})
 
+# def redirection(request):
+#     if user.is_valid() == True:
+#         return render(request,'payment.html')    
 
-@login_required(login_url='/accounts/login/')
-def user_profile(request,username):
-    user = User.objects.get(username=username)
-    profile =Profile.objects.get(username=user)
+
+# @login_required(login_url='/accounts/login/')
+# def user_profile(request,username):
+#     user = User.objects.get(username=username)
+#     profile =Profile.objects.get(username=user)
 
 @login_required(login_url='/accounts/login/')
 def create_profile(request):
@@ -84,32 +76,76 @@ def update_profile(request):
         return redirect('index')
 
     elif Profile.objects.get(username=current_user):
-        profile = Profile.objects.get(username=current_user)
-        form = ProfileForm(instance=profile)
+         profile = Profile.objects.get(username=current_user)
+         form = ProfileForm(instance=profile)
+    else:
+        form = ProfileForm()
+
+    return render(request,'profile/update_profile.html',{"form":form})
+@login_required(login_url='/accounts/login/')
+def my_profile(request):
+    current_user=request.user
+    profile =Profile.objects.get(username=current_user)
+    return render(request,'profile/user_profile.html',{"profile":profile})
+
+# def redirection(request):
+#     if user.is_valid() == True:
+#         return render(request,'payment.html')    
+
+
+# @login_required(login_url='/accounts/login/')
+# def user_profile(request,username):
+#     user = User.objects.get(username=username)
+#     profile =Profile.objects.get(username=user)
+
+@login_required(login_url='/accounts/login/')
+def create_profile(request):
+    current_user=request.user
+    if request.method=="POST":
+        form =ProfileForm(request.POST,request.FILES)
+        if form.is_valid():
+            profile = form.save(commit = False)
+            profile.username = current_user
+            profile.save()
+        return HttpResponseRedirect('/')
+    else:
+        form = ProfileForm()
+        return render(request,'profile/profile_form.html',{"form":form})
+    
+
+@login_required(login_url='/accounts/login/')
+def update_profile(request):
+    current_user=request.user
+    if request.method=="POST":
+        instance = Profile.objects.get(username=current_user)
+        form =ProfileForm(request.POST,request.FILES,instance=instance)
+        if form.is_valid():
+            profile = form.save(commit = False)
+            profile.username = current_user
+            profile.save()
+
+        return redirect('index')
+
+    elif Profile.objects.get(username=current_user):
+         profile = Profile.objects.get(username=current_user)
+         form = ProfileForm(instance=profile)
     else:
         form = ProfileForm()
 
     return render(request,'profile/update_profile.html',{"form":form})
 
-# def login(request):
-#     if request.method=='POST':
-#         form = UserCreationForm(request.POST)
-
-#         if form.is_valid():
-#             form.save()
-#         return render('login')
-
-
-
+@login_required(login_url='/accounts/login/')
 def payment(request):
     if request.method == 'POST':
         form = PaymentForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            payment = form.save(commit=False)
 
             phone_Number = form.cleaned_data['phone_Number']
             amount = form.cleaned_data['amount']
-            lipa_na_mpesa_online(phone_Number, amount)
+            conv = lipa_na_mpesa_online(phone_Number, amount)
+            payment.conversation_id = conv
+            payment.save()
             return redirect('bills')
 
     else:
@@ -161,23 +197,15 @@ def lipa_na_mpesa_online(phone, amount):
         "PartyA": phone,  # replace with your phone number to get stk push
         "PartyB": LipanaMpesaPpassword.Business_short_code,
         "PhoneNumber": phone,  # replace with your phone number to get stk push
-        "CallBackURL": "https://2b7c5cb8.ngrok.io/confirmation/",
+        "CallBackURL": "https://71fb3d6a.ngrok.io/confirmation/",
         "AccountReference": "Obindi",
         "TransactionDesc": "Testing stk push"
     }
 
     response = requests.post(api_url, json=request, headers=headers)
-    return HttpResponse('success')    
 
-    response = requests.post(api_url, json=request, headers=headers)   
-    if response.status_code==200:
-        data = response.json()
-        if 'ResponseCode' in data.keys():
-            if data['ResponseCode']==0:
-                merchant_id = data['MerchantRequestID']
-        pass
-    merchant_id = response
     print(response.json())
+    return response.json()['CheckoutRequestID']
 
 
 
@@ -207,7 +235,7 @@ def validation(request):
 def confirmation(request):
     mpesa_body =request.body.decode('utf-8')
     try:
-        mpesa_payment = json.loads(mpesa_body)
+        mpesa_payment_json = json.loads(mpesa_body)
     except Exception as e:
         print(e)
         context = {
@@ -215,9 +243,9 @@ def confirmation(request):
             "ResultDesc": "Accepted"
         }
         return JsonResponse(dict(context)) 
-    print(mpesa_payment) 
-    if mpesa_payment['Body']['stkCallback']['ResultCode']==0:
-        mpesa_payment = mpesa_payment['Body']['stkCallback']['CallbackMetadata']['Item']
+    print(mpesa_payment_json) 
+    if mpesa_payment_json['Body']['stkCallback']['ResultCode']==0:
+        mpesa_payment = mpesa_payment_json['Body']['stkCallback']['CallbackMetadata']['Item']
         print(mpesa_payment)
         # payment = MpesaPayment(
         #     first_name=mpesa_payment['FirstName'],
@@ -234,10 +262,12 @@ def confirmation(request):
         b = Bills(
            phone_number=mpesa_payment[4]['Value'],
            reference=mpesa_payment[1]['Value'],
-           amount=mpesa_payment[0]['Value']
+           amount=mpesa_payment[0]['Value'],
+           conversation_id=mpesa_payment_json['Body']['stkCallback']['CheckoutRequestID']
         )
 
         b.save()
+        send_bill_receipt(b)
         context = {
             "ResultCode": 0,
             "ResultDesc": "Accepted"
@@ -270,7 +300,31 @@ def bills(request):
 
     bills=Bills.objects.all()
 
-    return render(request, 'bills.html', {'details': details})
+    return render(request, 'all_bills.html', {'details': details})
+
+def search_results(request):
+    print(request.GET["payment"],'===================')
+    if 'payment' in request.GET and request.GET["payment"]:
+        search_term = request.GET.get("payment")
+        searched_payment = Payment.search_by_phone_Number(search_term)
+        message =f"{search_term}"
+
+        return render(request,'search.html',{"message":message,"payment":searched_payment})
+    else:
+        message ="You haven't searched for any term"
+        return render(request,'search.html',{"message":message})    
+
+
+
+#creating end point
+
+class BillsList(APIView):
+
+    def get(self, request, format=None):
+        all_bills = Bills.objects.all()
+        serializers = BillsSerializer(all_bills, many=True)
+        return Response(serializers.data)
+
 
 
 def search_results(request):
@@ -344,7 +398,19 @@ def getAccessToken(request):
 
 
 def combinedReport(request):
-    all_bills = Bills.objects.all()
+    all_bills = []
+    for bill in Bills.objects.all():
+        payment = Payment.objects.filter(conversation_id__isnull=False, conversation_id=bill.conversation_id).first();
+        _bill = {
+            'id': bill.id,
+            'amount': bill.amount,
+            'phone_number': bill.phone_number,
+            'reference': bill.reference,
+            'timestamp': bill.timestamp
+        }
+        if payment:
+            _bill['account'] = payment.account
+        all_bills.append(_bill)
     print(all_bills)
     all_payments=Payment.objects.all()
     print(all_payments)
@@ -353,34 +419,4 @@ def combinedReport(request):
 
 
 
-def send_receipt(request):
-        # Initialize SDK
-    username='sanergy'
-    api_key='7724f7cb28239d2244aa9af7c28313283732507bf9ebc30706951d8d1a011517'
 
-    af.initialize(username, api_key)
-
-    # Initialize a service e.g. SMS
-    receipt = af.SMS
-    # Use the service synchronously
-
-    customers = [                          
-        # "+"+customer,
-        '+254717654230',
-
-    ]
-    message='Confirmed you have payed for your toilet . Thank you for being a faithfull customer.'
-    response = receipt.send(message, customers)
-    print(response)
-
-    # Or use it asynchronously
-
-    def on_finish(error, response):
-        if error is not None:
-            raise error
-        # print(response)
-        return response
-
-    # sms.send(message, ["+"+customer], callback=on_finish)
-
-    return HttpResponse('success')

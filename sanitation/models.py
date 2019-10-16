@@ -20,8 +20,9 @@ class Payment(models.Model):
     account = models.CharField(max_length = 65, blank=True)
     phone_Number= models.CharField(max_length=15)
     amount = models.IntegerField(default=0)
+    amount = models.IntegerField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True,blank=True,null=True)
-
+    conversation_id = models.CharField(max_length=100, null=True)
 
 
     def __str__(self):
@@ -105,13 +106,15 @@ class Bills(models.Model):
     phone_number=models.TextField(default=0)
     reference=models.TextField(default=0)
     timestamp = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+    conversation_id = models.CharField(max_length=100, null=True)
 
 
 
 
-    def __str__(self):
-        return (self.amount) 
-
+    @classmethod
+    def search_by_phone_number(cls,search_term):
+        bills = cls.objects.filter(phone_number__icontains=search_term)
+        return bills   
 
     def save_bills(self):
 
