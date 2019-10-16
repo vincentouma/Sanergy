@@ -14,7 +14,7 @@ def send_bill_receipt(bill):
     customers = [                          
         "+"+str(bill.phone_number),
     ]
-    message=f'Confirmed you have payed {bill.amount} on {bill.timestamp} through {bill.phone_number} for your toilet . Thank you for being a faithfull customer.'
+    message=f'Confirmed you have payed Ksh{bill.amount} on {bill.timestamp} through {bill.phone_number} for your toilet . Thank you for being a faithfull customer.'
     response = receipt.send(message, customers)
     print(response)
 

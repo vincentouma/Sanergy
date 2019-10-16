@@ -37,15 +37,7 @@ def my_profile(request):
     profile =Profile.objects.get(username=current_user)
     return render(request,'profile/user_profile.html',{"profile":profile})
 
-# def redirection(request):
-#     if user.is_valid() == True:
-#         return render(request,'payment.html')    
 
-
-# @login_required(login_url='/accounts/login/')
-# def user_profile(request,username):
-#     user = User.objects.get(username=username)
-#     profile =Profile.objects.get(username=user)
 
 @login_required(login_url='/accounts/login/')
 def create_profile(request):
@@ -88,15 +80,7 @@ def my_profile(request):
     profile =Profile.objects.get(username=current_user)
     return render(request,'profile/user_profile.html',{"profile":profile})
 
-# def redirection(request):
-#     if user.is_valid() == True:
-#         return render(request,'payment.html')    
 
-
-# @login_required(login_url='/accounts/login/')
-# def user_profile(request,username):
-#     user = User.objects.get(username=username)
-#     profile =Profile.objects.get(username=user)
 
 @login_required(login_url='/accounts/login/')
 def create_profile(request):
@@ -376,27 +360,7 @@ def getAccessToken(request):
     return HttpResponse(validated_mpesa_access_token)
 
 
-# def send_sms(request):
-#     url = ('https://api.sandbox.africastalking.com/version1/messaging/? api_key = F53c328bf59161cb838b48b94bdcb26a4ed2e19611e2ad1a4f056ecdf27e5fd2')
-#     # africastalking.initialize(ShortCode, api_key)
-#     # headers = {"Authorization": "Bearer %s" % access_token}
-#     request = {
-#         "recipients": '+254706915605',
-#         "message": "I'm a lumberjack and it's ok, I sleep all night and I work all day",
-#         "sender": "1005",
-#         "user_name": "sandbox"
-     
-#     }
-
-#     response = requests.post(json=request, url=url)
-#     return HttpResponse('success')
-#     print(response.json())
-
     
-
-
-
-
 def combinedReport(request):
     all_bills = []
     for bill in Bills.objects.all():
