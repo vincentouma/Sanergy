@@ -17,17 +17,34 @@
             <div class="row">
 
             {% if payment %}
-            {% for payment in payment %}
-            <div class="col-sm-6 col-md-3">
-            <h1>{{payment.name}}</h1>
-          <p>{{ payment.amount}}</p>
-          <p>{{payment.account}}</p>
-          <p>{{payment.phone_Number}}</p>
-          <p>{{payment.timestamp}}</p>
-
-
-            </div>
-             {% endfor %}
+            
+          <table class="table table-bordered table-primary" id="tblCustomers" cellspacing="0" cellpadding="0">
+            <tr>
+                <th>No</th> 
+                <th>Name</th> 
+                <th>Phone Number</th> 
+                <th>Account</th>
+                 <th>Amount</th>
+                <th>Date</th>
+                
+            
+              </tr>
+            {% for payment in payment%}
+            
+                <tr>
+                  <td>{{payment.id}}</td>
+                  <td>{{payment.name}}</td>
+                  <td>{{payment.phone_Number}}</td>
+                  <td>{{payment.account}}</td>
+                  <td>{{ payment.amount}}</td>
+                  <td>{{payment.timestamp}}</td>
+                  
+            
+                </tr>
+                {% endfor %}
+                </table>
+        
+            
                 {% endif %}
              </div>
             </div>

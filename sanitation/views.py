@@ -130,7 +130,7 @@ def payment(request):
             conv = lipa_na_mpesa_online(phone_Number, amount)
             payment.conversation_id = conv
             payment.save()
-            return redirect('bills')
+            return redirect('all_customer_bills')
 
     else:
         form = PaymentForm()
@@ -181,7 +181,7 @@ def lipa_na_mpesa_online(phone, amount):
         "PartyA": phone,  # replace with your phone number to get stk push
         "PartyB": LipanaMpesaPpassword.Business_short_code,
         "PhoneNumber": phone,  # replace with your phone number to get stk push
-        "CallBackURL": "https://71fb3d6a.ngrok.io/confirmation/",
+        "CallBackURL": "https://e1cf1145.ngrok.io/confirmation/",
         "AccountReference": "Obindi",
         "TransactionDesc": "Testing stk push"
     }
@@ -374,6 +374,7 @@ def combinedReport(request):
         }
         if payment:
             _bill['account'] = payment.account
+            _bill['name'] = payment.name
         all_bills.append(_bill)
     print(all_bills)
     all_payments=Payment.objects.all()
